@@ -1,0 +1,32 @@
+Exercise 02
+
+1. Why do we need separate d_a, d_b, d_c variables?
+a, b, and c are stored in host (CPU) memory, while d_a, d_b, and d_c point to device (GPU) memory. The GPU kernel needs data accessible in device memory, so the inputs are copied from the host to the device before the kernel runs.
+
+2. Why use &a in cudaMemcpy() but d_a in the kernel?
+&a gives the address of the CPU variable a, which is the source of the copy. d_a already contains the address of the allocated GPU memory, so it is passed directly to the kernel.
+
+
+Exercise 03
+
+where N = 512:
+- Blocks = 512
+- Threads per block = 1
+- Total threads = 512
+A GPU executes threads in groups of 32 called warps. Since each block contains only one thread, each block still occupies a warp but only 1 of the 32 lanes does useful work, making this configuration inefficient.
+
+
+Exercise 04
+
+What happens when N = 2048?
+It attempts to launch 2,048 threads in a single block. This exceeds the maximum number of threads allowed in a CUDA block.
+
+
+Exercise 05
+
+1. Why use a multiple of 32?
+CUDA executes threads in groups of 32 called warps. Using a multiple of 32 avoids partially filled warps and uses GPU resources more efficiently.
+
+2. What happens if you use 500 instead of 512?
+It launches exactly enough threads for this case, but 500 is not a multiple of 32, so the last warp in each block is only partially used, making it less efficient.
+
